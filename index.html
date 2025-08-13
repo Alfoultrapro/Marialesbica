@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#D53F8C">
+    <title>Maria Lesbica</title>
+    <link rel="apple-touch-icon" href="https://i.imgur.com/3K2qN7a.png">
+    <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Maria%20Lesbica%22%2C%22short_name%22%3A%22Maria%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fi.imgur.com%2F3K2qN7a.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23D53F8C%22%7D">
+    <style>
+        :root {
+            --primary: #D53F8C;
+            --secondary: #9F2BC1;
+            --accent: #F687B3;
+            --text: #1A103D;
+            --bg: linear-gradient(135deg, #F687B3 0%, #D53F8C 100%);
+            --shop-bg: rgba(255, 255, 255, 0.9);
+        }
+        
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background-color: var(--shop-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(154, 0, 87, 0.3);
+            margin-bottom: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            margin: 0 0 20px 0;
+            font-weight: 700;
+            font-size: clamp(1.5rem, 6vw, 1.8rem);
+            color: var(--primary);
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .counter-display {
+            font-size: clamp(2rem, 10vw, 3rem);
+            font-weight: 700;
+            margin: 15px 0;
+            color: var(--primary);
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        .mps-display {
+            font-size: 1rem;
+            color: var(--text);
+            opacity: 0.8;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            font-size: 1rem;
+            margin: 15px 0;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(214, 63, 140, 0.4);
+            width: 100%;
+            font-weight: 600;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+        }
+
+        .emoji {
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 15px 0;
+            animation: pulse 2s infinite;
+        }
+
+        .reset-btn {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            margin: 10px 0 5px 0;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            cursor: pointer;
+            text-decoration: underline;
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 15px;
+            border-radius: 30px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .shop {
+            display: none;
+            background: var(--shop-bg);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .shop.active {
+            display: block;
+        }
+
+        .upgrade {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .upgrade:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .upgrade-info {
+            flex: 1;
+        }
+
+        .upgrade-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .upgrade-description {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .upgrade-price {
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+            margin-left: 15px;
+        }
+
+        .buy-btn {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .buy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .buy-btn:disabled {
+            background: #cccccc;
+        }
+
+        .stats {
+            font-size: 0.9rem;
+            margin-top: 15px;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .love-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+
+        .float-text {
+            position: absolute;
+            animation: floatUp 1s forwards;
+            font-weight: 600;
+            color: var(--primary);
+            pointer-events: none;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        /* iOS specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                min-height: -webkit-fill-available;
+            }
+            
+            #app {
+                min-height: -webkit-fill-available;
+            }
+            
+            .btn {
+                -webkit-appearance: none;
+            }
+        }
+
+        /* Media query per mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="love-effect" id="loveEffect"></div>
+    <div id="app">
+        <div class="container">
+            <h1>Maria Lesbica</h1>
+            <div class="counter-display" id="counter">0 maria lesbica</div>
+            <div class="mps-display" id="mps">0 maria lesbiche/secondo</div>
+            <button class="btn" id="incrementBtn">Bacia Maria 💋</button>
+            <div class="emoji">💅🌸💄</div>
+            <button class="reset-btn" id="resetBtn">Azzera tutto</button>
+        </div>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="main">Principale</button>
+            <button class="tab-btn" data-tab="shop">Negozio</button>
+        </div>
+
+        <div class="container shop active" id="shop-tab">
+            <h2>Potenziamenti Romantici</h2>
+            <div id="upgrades-container"></div>
+            
+            <h2 style="margin-top: 20px;">Incontri Galanti</h2>
+            <div id="automatons-container"></div>
+            
+            <div class="stats">
+                <div>Baci totali: <span id="total-clicks">0</span></div>
+                <div>Tempo con Maria: <span id="play-time">0s</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Stato del gioco
+        const gameState = {
+            marias: 0,
+            totalMarias: 0,
+            totalClicks: 0,
+            mps: 0,
+            upgrades: {
+                kissPower: {
+                    name: "Potenza del Bacio",
+                    level: 0,
+                    cost: 10,
+                    power: 1,
+                    costMultiplier: 1.5,
+                    description: "Aumenta le marie guadagnate per bacio",
+                    emoji: "💋"
+                },
+                lipstick: {
+                    name: "Rossetto",
+                    level: 0,
+                    cost: 25,
+                    power: 1,
+                    costMultiplier: 1.8,
+                    description: "Rende i tuoi baci più seducenti",
+                    emoji: "💄"
+                }
+            },
+            automatons: {
+                dateNight: {
+                    name: "Appuntamento",
+                    level: 0,
+                    cost: 50,
+                    mps: 0.1,
+                    costMultiplier: 2.2,
+                    description: "Un romantico appuntamento con Maria",
+                    emoji: "🌹"
+                },
+                weekendGetaway: {
+                    name: "Weekend",
+                    level: 0,
+                    cost: 200,
+                    mps: 1,
+                    costMultiplier: 2.5,
+                    description: "Un weekend passionale con Maria",
+                    emoji: "🏖️"
+                }
+            },
+            playTime: 0,
+            lastUpdate: Date.now()
+        };
+
+        // Carica lo stato salvato
+        function loadGame() {
+            const saved = localStorage.getItem('mariaLesbicaSave');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                Object.assign(gameState, parsed);
+                gameState.lastUpdate = Date.now();
+            }
+        }
+
+        // Salva lo stato del gioco
+        function saveGame() {
+            localStorage.setItem('mariaLesbicaSave', JSON.stringify(gameState));
+        }
+
+        // Elementi DOM
+        const counterDisplay = document.getElementById('counter');
+        const mpsDisplay = document.getElementById('mps');
+        const incrementBtn = document.getElementById('incrementBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const loveEffect = document.getElementById('loveEffect');
+        const upgradesContainer = document.getElementById('upgrades-container');
+        const automatonsContainer = document.getElementById('automatons-container');
+        const totalClicksDisplay = document.getElementById('total-clicks');
+        const playTimeDisplay = document.getElementById('play-time');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const shopTab = document.getElementById('shop-tab');
+
+        // Inizializzazione
+        loadGame();
+        updateDisplays();
+        renderUpgrades();
+        renderAutomatons();
+        setupTabs();
+
+        // Calcola il bonus offline
+        const now = Date.now();
+        const offlineTime = (now - gameState.lastUpdate) / 1000;
+        if (offlineTime > 5 && offlineTime < 60 * 60 * 24) {
+            const offlineMarias = gameState.mps * offlineTime;
+            if (offlineMarias > 0) {
+                gameState.marias += offlineMarias;
+                gameState.totalMarias += offlineMarias;
+                showOfflineBonus(offlineMarias, offlineTime);
+            }
+        }
+        gameState.lastUpdate = now;
+
+        // Avvia il game loop
+        let gameLoop = setInterval(updateGame, 1000);
+        let saveInterval = setInterval(saveGame, 10000);
+
+        // Setup tabs
+        function setupTabs() {
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    if (btn.dataset.tab === 'shop') {
+                        shopTab.classList.add('active');
+                    } else {
+                        shopTab.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        // Mostra bonus offline
+        function showOfflineBonus(amount, time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            
+            const bonusMsg = document.createElement('div');
+            bonusMsg.textContent = `Bonus offline: +${Math.floor(amount)} marie lesbiche (${minutes}m ${seconds}s)`;
+            bonusMsg.style.cssText = `
+                background: rgba(255, 255, 255, 0.9);
+                padding: 10px;
+                border-radius: 10px;
+                margin: 10px 0;
+                text-align: center;
+                font-weight: bold;
+                color: var(--primary);
+                animation: fadeOut 3s 2s forwards;
+            `;
+            
+            document.querySelector('#app').insertBefore(bonusMsg, document.querySelector('.container:first-child'));
+            
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes fadeOut {
+                    to { opacity: 0; transform: translateY(-20px); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            setTimeout(() => {
+                bonusMsg.remove();
+                document.head.removeChild(style);
+            }, 5000);
+        }
+
+        // Aggiorna il gioco
+        function updateGame() {
+            if (gameState.mps > 0) {
+                const mariasToAdd = gameState.mps;
+                gameState.marias += mariasToAdd;
+                gameState.totalMarias += mariasToAdd;
+                
+                if (mariasToAdd >= 1) {
+                    showFloatText(`+${mariasToAdd.toFixed(1)}`, mpsDisplay);
+                }
+            }
+            
+            gameState.playTime++;
+            updateDisplays();
+        }
+
+        // Aggiorna i display
+        function updateDisplays() {
+            counterDisplay.textContent = `${Math.floor(gameState.marias)} maria lesbica${gameState.marias !== 1 ? 'e' : ''}`;
+            mpsDisplay.textContent = `${gameState.mps.toFixed(1)} maria lesbica${gameState.mps !== 1 ? 'e' : ''}/secondo`;
+            totalClicksDisplay.textContent = gameState.totalClicks;
+            
+            const hours = Math.floor(gameState.playTime / 3600);
+            const minutes = Math.floor((gameState.playTime % 3600) / 60);
+            const seconds = gameState.playTime % 60;
+            
+            if (hours > 0) {
+                playTimeDisplay.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            } else if (minutes > 0) {
+                playTimeDisplay.textContent = `${minutes}m ${seconds}s`;
+            } else {
+                playTimeDisplay.textContent = `${seconds}s`;
+            }
+        }
+
+        // Mostra testo fluttuante
+        function showFloatText(text, element) {
+            const rect = element.getBoundingClientRect();
+            const floatText = document.createElement('div');
+            floatText.className = 'float-text';
+            floatText.textContent = text;
+            floatText.style.left = `${rect.left + rect.width / 2}px`;
+            floatText.style.top = `${rect.top}px`;
+            
+            document.body.appendChild(floatText);
+            
+            setTimeout(() => {
+                floatText.remove();
+            }, 1000);
+        }
+
+        // Renderizza gli upgrade
+        function renderUpgrades() {
+            upgradesContainer.innerHTML = '';
+            
+            for (const key in gameState.upgrades) {
+                const upgrade = gameState.upgrades[key];
+                const upgradeEl = createUpgradeElement(
+                    `${upgrade.name} ${upgrade.emoji}`,
+                    upgrade.description,
+                    `Livello: ${upgrade.level}`,
+                    upgrade.cost,
+                    () => buyUpgrade(key)
+                );
+                upgradesContainer.appendChild(upgradeEl);
+            }
+        }
+
+        // Renderizza gli automatismi
+        function renderAutomatons() {
+            automatonsContainer.innerHTML = '';
+            
+            for (const key in gameState.automatons) {
+                const automaton = gameState.automatons[key];
+                const automatonEl = createUpgradeElement(
+                    `${automaton.name} ${automaton.emoji}`,
+                    `${automaton.description} (${automaton.mps} maria/s)`,
+                    `Quantità: ${automaton.level}`,
+                    automaton.cost,
+                    () => buyAutomaton(key)
+                );
+                automatonsContainer.appendChild(automatonEl);
+            }
+        }
+
+        // Crea elemento upgrade
+        function createUpgradeElement(name, description, stats, cost, onClick) {
+            const upgrade = document.createElement('div');
+            upgrade.className = 'upgrade';
+            
+            const info = document.createElement('div');
+            info.className = 'upgrade-info';
+            
+            const nameEl = document.createElement('div');
+            nameEl.className = 'upgrade-name';
+            nameEl.innerHTML = name;
+            
+            const descEl = document.createElement('div');
+            descEl.className = 'upgrade-description';
+            descEl.textContent = description;
+            
+            const statsEl = document.createElement('div');
+            statsEl.className = 'upgrade-stats';
+            statsEl.textContent = stats;
+            
+            info.appendChild(nameEl);
+            info.appendChild(descEl);
+            info.appendChild(statsEl);
+            
+            const priceEl = document.createElement('div');
+            priceEl.className = 'upgrade-price';
+            priceEl.textContent = `${Math.ceil(cost)} maria`;
+            
+            const buyBtn = document.createElement('button');
+            buyBtn.className = 'buy-btn';
+            buyBtn.textContent = 'Compra';
+            buyBtn.disabled = gameState.marias < cost;
+            buyBtn.addEventListener('click', onClick);
+            
+            upgrade.appendChild(info);
+            upgrade.appendChild(priceEl);
+            upgrade.appendChild(buyBtn);
+            
+            return upgrade;
+        }
+
+        // Compra upgrade
+        function buyUpgrade(upgradeId) {
+            const upgrade = gameState.upgrades[upgradeId];
+            
+            if (gameState.marias >= upgrade.cost) {
+                gameState.marias -= upgrade.cost;
+                upgrade.level++;
+                
+                if (upgradeId === 'kissPower') {
+                    upgrade.power++;
+                }
+                
+                upgrade.cost = Math.ceil(upgrade.cost * upgrade.costMultiplier);
+                
+                updateDisplays();
+                renderUpgrades();
+                saveGame();
+                
+                showFloatText(`Acquistato!`, incrementBtn);
+            }
+        }
+
+        // Compra automazione
+        function buyAutomaton(automatonId) {
+            const automaton = gameState.automatons[automatonId];
+            
+            if (gameState.marias >= automaton.cost) {
+                gameState.marias -= automaton.cost;
+                automaton.level++;
+                gameState.mps += automaton.mps;
+                automaton.cost = Math.ceil(automaton.cost * automaton.costMultiplier);
+                
+                updateDisplays();
+                renderAutomatons();
+                saveGame();
+                
+                showFloatText(`Acquistato!`, incrementBtn);
+            }
+        }
+
+        // Click manuale
+        incrementBtn.addEventListener('click', () => {
+            const clickPower = gameState.upgrades.kissPower.power;
+            gameState.marias += clickPower;
+            gameState.totalMarias += clickPower;
+            gameState.totalClicks++;
+            
+            createLoveEffect(clickPower);
+            showFloatText(`+${clickPower}`, incrementBtn);
+            
+            updateDisplays();
+            renderUpgrades();
+            renderAutomatons();
+            saveGame();
+        });
+
+        // Effetto d'amore
+        function createLoveEffect(power = 1) {
+            const lipstickLevel = gameState.upgrades.lipstick.level + 1;
+            const elements = ['💖', '💋', '🌸', '💄', '👩‍❤️‍💋‍👩', '💅', '👠', '👗'];
+            let html = '';
+            const elementsCount = Math.min(5 + power * 2, 20);
+            
+            for (let i = 0; i < elementsCount; i++) {
+                const element = elements[Math.floor(Math.random() * elements.length)];
+                const size = Math.random() * 30 * lipstickLevel + 20;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100 + 50;
+                const opacity = Math.random() * 0.3 + 0.2;
+                const rotation = Math.random() * 360;
+                
+                html += `
+                    <div style="
+                        position: absolute;
+                        font-size: ${size}px;
+                        left: ${posX}%;
+                        top: ${posY}%;
+                        opacity: ${opacity};
+                        transform: rotate(${rotation}deg);
+                        animation: float ${Math.random() * 3 + 2}s ease-in infinite;
+                        will-change: transform;
+                    ">${element}</div>
+                `;
+            }
+            
+            loveEffect.innerHTML = html;
+        }
+
+        // Resetta il gioco
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Sei sicura di voler azzerare tutta la tua relazione con Maria?')) {
+                // Resetta lo stato del gioco
+                gameState.marias = 0;
+                gameState.totalMarias = 0;
+                gameState.totalClicks = 0;
+                gameState.mps = 0;
+                gameState.playTime = 0;
+                
+                // Resetta gli upgrade
+                for (const key in gameState.upgrades) {
+                    gameState.upgrades[key].level = 0;
+                    gameState.upgrades[key].cost = gameState.upgrades[key].cost / Math.pow(gameState.upgrades[key].costMultiplier, gameState.upgrades[key].level);
+                }
+                
+                // Resetta gli automatismi
+                for (const key in gameState.automatons) {
+                    gameState.automatons[key].level = 0;
+                    gameState.automatons[key].cost = gameState.automatons[key].cost / Math.pow(gameState.automatons[key].costMultiplier, gameState.automatons[key].level);
+                }
+                
+                updateDisplays();
+                renderUpgrades();
+                renderAutomatons();
+                saveGame();
+            }
+        });
+
+        // Supporto per PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
+
+        // Supporto per iOS standalone mode
+        if (window.navigator.standalone) {
+            document.documentElement.style.setProperty('--bg', 'white');
+            document.querySelectorAll('.container').forEach(el => {
+                el.style.boxShadow = 'none';
+                el.style.background = 'rgba(255, 255, 255, 0.95)';
+            });
+        }
+    </script>
+</body>
+</html>
